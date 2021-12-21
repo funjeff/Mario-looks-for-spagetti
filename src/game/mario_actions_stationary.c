@@ -16,6 +16,9 @@
 #include "sound_init.h"
 #include "surface_terrains.h"
 #include "rumble_init.h"
+#include "object_helpers.h"
+#include "object_list_processor.h"
+#include "interaction.h"
 
 s32 check_common_idle_cancels(struct MarioState *m) {
     mario_drop_held_object(m);
@@ -49,13 +52,22 @@ s32 check_common_idle_cancels(struct MarioState *m) {
     }
 
     if (m->input & INPUT_B_PRESSED) {
-        return set_mario_action(m, ACT_PUNCHING, 0);
+    	return set_mario_action(m, ACT_PUNCHING, 0);
     }
 
     if (m->input & INPUT_Z_DOWN) {
         return set_mario_action(m, ACT_START_CROUCHING, 0);
     }
+    if (m->controller->buttonPressed & L_TRIG){
 
+    	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+    	u32 interaction = determine_interaction(m, ball);
+    	m->riddenObj = ball;
+    	m->interactObj = ball;
+    	m->usedObj = ball;
+    	attack_object(ball, interaction);
+    	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+    }
     return FALSE;
 }
 

@@ -12,6 +12,9 @@
 #include "memory.h"
 #include "behavior_data.h"
 #include "rumble_init.h"
+#include "object_helpers.h"
+#include "object_list_processor.h"
+#include "interaction.h"
 
 struct LandingAction {
     s16 numFrames;
@@ -807,6 +810,16 @@ s32 act_walking(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_CROUCH_SLIDE, 0);
     }
+    if (m->controller->buttonPressed & L_TRIG){
+
+           	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+           	u32 interaction = determine_interaction(m, ball);
+           	m->riddenObj = ball;
+           	m->interactObj = ball;
+           	m->usedObj = ball;
+           	attack_object(ball, interaction);
+           	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+           }
 
     m->actionState = 0;
 
@@ -901,6 +914,17 @@ s32 act_hold_walking(struct MarioState *m) {
         return drop_and_set_mario_action(m, ACT_CROUCH_SLIDE, 0);
     }
 
+    if (m->controller->buttonPressed & L_TRIG){
+
+       	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+       	u32 interaction = determine_interaction(m, ball);
+       	m->riddenObj = ball;
+       	m->interactObj = ball;
+       	m->usedObj = ball;
+       	attack_object(ball, interaction);
+       	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+       }
+
     m->intendedMag *= 0.4f;
 
     update_walking_speed(m);
@@ -938,6 +962,17 @@ s32 act_hold_heavy_walking(struct MarioState *m) {
     if (m->input & INPUT_UNKNOWN_5) {
         return set_mario_action(m, ACT_HOLD_HEAVY_IDLE, 0);
     }
+
+    if (m->controller->buttonPressed & L_TRIG){
+
+           	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+           	u32 interaction = determine_interaction(m, ball);
+           	m->riddenObj = ball;
+           	m->interactObj = ball;
+           	m->usedObj = ball;
+           	attack_object(ball, interaction);
+           	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+           }
 
     m->intendedMag *= 0.1f;
 
@@ -1212,6 +1247,7 @@ s32 act_riding_shell_ground(struct MarioState *m) {
         return set_mario_action(m, ACT_CROUCH_SLIDE, 0);
     }
 
+
     update_shell_speed(m);
     set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_START_RIDING_SHELL : MARIO_ANIM_RIDING_SHELL);
 
@@ -1228,7 +1264,6 @@ s32 act_riding_shell_ground(struct MarioState *m) {
             set_mario_action(m, ACT_BACKWARD_GROUND_KB, 0);
             break;
     }
-
     tilt_body_ground_shell(m, startYaw);
     if (m->floor->type == SURFACE_BURNING) {
         play_sound(SOUND_MOVING_RIDING_SHELL_LAVA, m->marioObj->header.gfx.cameraToObject);

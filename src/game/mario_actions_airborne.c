@@ -13,6 +13,10 @@
 #include "mario_step.h"
 #include "save_file.h"
 #include "rumble_init.h"
+#include "object_helpers.h"
+#include "object_list_processor.h"
+#include "interaction.h"
+#include "include/behavior_data.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.animInfo.animFrame;
@@ -452,6 +456,16 @@ s32 act_jump(struct MarioState *m) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
 
+    if (m->controller->buttonPressed & L_TRIG){
+      	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+        u32 interaction = determine_interaction(m, ball);
+        m->riddenObj = ball;
+        m->interactObj = ball;
+       	m->usedObj = ball;
+       	attack_object(ball, interaction);
+      	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+    }
+
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, 0);
     common_air_action_step(m, ACT_JUMP_LAND, MARIO_ANIM_SINGLE_JUMP,
                            AIR_STEP_CHECK_LEDGE_GRAB | AIR_STEP_CHECK_HANG);
@@ -471,6 +485,16 @@ s32 act_double_jump(struct MarioState *m) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
 
+    if (m->controller->buttonPressed & L_TRIG){
+      	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+        u32 interaction = determine_interaction(m, ball);
+        m->riddenObj = ball;
+        m->interactObj = ball;
+       	m->usedObj = ball;
+       	attack_object(ball, interaction);
+       	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+    }
+
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_HOOHOO);
     common_air_action_step(m, ACT_DOUBLE_JUMP_LAND, animation,
                            AIR_STEP_CHECK_LEDGE_GRAB | AIR_STEP_CHECK_HANG);
@@ -488,6 +512,16 @@ s32 act_triple_jump(struct MarioState *m) {
 
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
+    }
+
+    if (m->controller->buttonPressed & L_TRIG){
+      	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+        u32 interaction = determine_interaction(m, ball);
+        m->riddenObj = ball;
+        m->interactObj = ball;
+      	m->usedObj = ball;
+      	attack_object(ball, interaction);
+       	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
     }
 
 #ifndef VERSION_JP
@@ -545,6 +579,15 @@ s32 act_freefall(struct MarioState *m) {
             break;
     }
 
+    if (m->controller->buttonPressed & L_TRIG){
+    	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+        u32 interaction = determine_interaction(m, ball);
+        m->riddenObj = ball;
+        m->interactObj = ball;
+       	m->usedObj = ball;
+       	attack_object(ball, interaction);
+      	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+    }
     common_air_action_step(m, ACT_FREEFALL_LAND, animation, AIR_STEP_CHECK_LEDGE_GRAB);
     return FALSE;
 }
@@ -560,6 +603,15 @@ s32 act_hold_jump(struct MarioState *m) {
 
     if (m->input & INPUT_Z_PRESSED) {
         return drop_and_set_mario_action(m, ACT_GROUND_POUND, 0);
+    }
+    if (m->controller->buttonPressed & L_TRIG){
+      	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+        u32 interaction = determine_interaction(m, ball);
+        m->riddenObj = ball;
+        m->interactObj = ball;
+       	m->usedObj = ball;
+      	attack_object(ball, interaction);
+     	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
     }
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, 0);
@@ -588,6 +640,16 @@ s32 act_hold_freefall(struct MarioState *m) {
         return drop_and_set_mario_action(m, ACT_GROUND_POUND, 0);
     }
 
+    if (m->controller->buttonPressed & L_TRIG){
+        struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+        u32 interaction = determine_interaction(m, ball);
+        m->riddenObj = ball;
+        m->interactObj = ball;
+        m->usedObj = ball;
+        attack_object(ball, interaction);
+        return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+      }
+
     common_air_action_step(m, ACT_HOLD_FREEFALL_LAND, animation, AIR_STEP_CHECK_LEDGE_GRAB);
     return FALSE;
 }
@@ -600,6 +662,15 @@ s32 act_side_flip(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
+    if (m->controller->buttonPressed & L_TRIG){
+      	struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+        u32 interaction = determine_interaction(m, ball);
+        m->riddenObj = ball;
+        m->interactObj = ball;
+       	m->usedObj = ball;
+       	attack_object(ball, interaction);
+       	return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+     }
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, 0);
 
@@ -2011,6 +2082,16 @@ s32 act_special_triple_jump(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
+
+    if (m->controller->buttonPressed & L_TRIG){
+       struct Object * ball = spawn_object_relative(0,0,0,0, gMarioObject, MODEL_BOBOMB_BUDDY  ,bhvKoopaShell);
+       u32 interaction = determine_interaction(m, ball);
+       m->riddenObj = ball;
+       m->interactObj = ball;
+       m->usedObj = ball;
+       attack_object(ball, interaction);
+       return set_mario_action(m, ACT_RIDING_SHELL_GROUND, 0);
+     }
 
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAHOO);
 
